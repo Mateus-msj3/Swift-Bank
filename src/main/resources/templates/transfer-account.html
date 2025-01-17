@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout">
+<body>
+<div layout:fragment="content">
+    <div class="container mt-5">
+        <h2 class="text-center">Transferir Valor</h2>
+
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <form th:action="@{/user/accounts/transfer}" method="post" class="mt-4">
+            <div class="mb-3">
+                <label for="sourceAccountId" class="form-label">Conta de Origem</label>
+                <select id="sourceAccountId" name="sourceAccountId" class="form-select" required>
+                    <option value="" selected disabled>Selecione a conta de origem</option>
+                    <option th:each="account : ${accounts}"
+                            th:value="${account.id}"
+                            th:text="'Conta ' + ${account.id} + ' - Saldo: R$ ' + ${account.balance}"></option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="targetAccountId" class="form-label">Conta de Destino</label>
+                <select id="targetAccountId" name="targetAccountId" class="form-select" required>
+                    <option value="" selected disabled>Selecione a conta de destino</option>
+                    <option th:each="account : ${targetAccounts}"
+                            th:value="${account.id}"
+                            th:text="'Conta ' + ${account.id} + ' - Titular: ' + ${account.user.name}"></option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="amount" class="form-label">Valor</label>
+                <input type="number" id="amount" name="amount" class="form-control w-50" step="0.01" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Transferir</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

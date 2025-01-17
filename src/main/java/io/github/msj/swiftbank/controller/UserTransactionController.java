@@ -70,6 +70,37 @@ public class UserTransactionController {
         return "debit-account";
     }
 
+    @GetMapping("/accounts/transfer")
+    public String showTransferForm(Model model, Authentication authentication) {
+        populateTransferForm(model, authentication);
+        return "transfer-account";
+    }
+
+    @PostMapping("/accounts/transfer")
+    public String transferBetweenAccounts(@RequestParam Long sourceAccountId,
+                                          @RequestParam Long targetAccountId,
+                                          @RequestParam BigDecimal amount,
+                                          Model model,
+                                          Authentication authentication) {
+        try {
+            accountService.transferBetweenAccounts(sourceAccountId, targetAccountId, amount);
+            model.addAttribute("successMessage", "Transferência realizada com sucesso!");
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+        }
+
+        populateTransferForm(model, authentication);
+
+        return "transfer-account";
+    }
+
+
+    private void populateTransferForm(Model model, Authentication authentication) {
+        User user = userService.findByUsername(authentication.getName());
+        model.addAttribute("accounts", accountService.getAccountsByUser(user.getId()));
+        model.addAttribute("targetAccounts", accountService.getAccountsExcludingUser(user.getId()));
+    }
+
     private void addUserAccountsToModel(Model model, Authentication authentication) {
         User user = userService.findByUsername(authentication.getName());
         model.addAttribute("accounts", accountService.getAccountsByUser(user.getId()));

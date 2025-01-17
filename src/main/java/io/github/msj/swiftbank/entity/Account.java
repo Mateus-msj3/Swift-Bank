@@ -9,6 +9,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -31,6 +32,9 @@ public class Account {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @Version
+    private Integer version;
 
     @PrePersist
     public void prePersist() {
@@ -71,6 +75,10 @@ public class Account {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Integer getVersion() {
+        return version;
     }
 }
 
