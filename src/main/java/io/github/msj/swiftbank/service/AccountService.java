@@ -65,4 +65,28 @@ public class AccountService {
         transaction.setTransactionType("CREDIT");
         transactionService.save(transaction);
     }
+
+    public void debitAccount(Long accountId, BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("O valor do débito deve ser maior que zero.");
+        }
+
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new IllegalArgumentException("Conta não encontrada."));
+
+        if (account.getBalance().compareTo(amount) < 0) {
+            throw new IllegalArgumentException("Saldo insuficiente para realizar o débito.");
+        }
+
+        // Atualizar o saldo da conta
+        account.setBalance(account.getBalance().subtract(amount));
+        accountRepository.save(account);
+
+        // Registrar a transação
+        Transaction transaction = new Transaction();
+        transaction.setAccount(account);
+        transaction.setAmount(amount.negate()); // Débito é um valor negativo
+        transaction.setTransactionType("DEBIT");
+        transactionService.save(transaction);
+    }
 }

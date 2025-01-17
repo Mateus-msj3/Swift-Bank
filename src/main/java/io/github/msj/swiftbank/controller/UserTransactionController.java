@@ -8,11 +8,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
 
 @Controller
+@RequestMapping("/user")
 public class UserTransactionController {
 
     private final AccountService accountService;
@@ -24,13 +26,13 @@ public class UserTransactionController {
         this.userService = userService;
     }
 
-    @GetMapping("/user/accounts/credit")
+    @GetMapping("/accounts/credit")
     public String showCreditForm(Model model, Authentication authentication) {
         addUserAccountsToModel(model, authentication);
         return "credit-account";
     }
 
-    @PostMapping("/user/accounts/credit")
+    @PostMapping("/accounts/credit")
     public String creditAccount(@RequestParam Long accountId,
                                 @RequestParam BigDecimal amount,
                                 Model model,
@@ -44,6 +46,28 @@ public class UserTransactionController {
 
         addUserAccountsToModel(model, authentication);
         return "credit-account";
+    }
+
+    @GetMapping("/accounts/debit")
+    public String showDebitForm(Model model, Authentication authentication) {
+        addUserAccountsToModel(model, authentication);
+        return "debit-account";
+    }
+
+    @PostMapping("/accounts/debit")
+    public String debitAccount(@RequestParam Long accountId,
+                               @RequestParam BigDecimal amount,
+                               Model model,
+                               Authentication authentication) {
+        try {
+            accountService.debitAccount(accountId, amount);
+            model.addAttribute("successMessage", "Valor debitado com sucesso!");
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+        }
+
+        addUserAccountsToModel(model, authentication);
+        return "debit-account";
     }
 
     private void addUserAccountsToModel(Model model, Authentication authentication) {
