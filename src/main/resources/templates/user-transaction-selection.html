@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.w3.org/1999/xhtml" layout:decorate="layout">
+<body>
+<div layout:fragment="content">
+    <h2>Relatório de Transações</h2>
+    <form th:action="@{/user/transactions}" method="post">
+        <div class="mb-3">
+            <label for="accountId" class="form-label">Selecione a Conta</label>
+            <select id="accountId" name="accountId" class="form-select" required>
+                <option value="" disabled selected>Escolha uma conta</option>
+                <option th:each="account : ${accounts}" th:value="${account.id}" th:text="'Conta ID: ' + ${account.id} + ' - Saldo: ' + ${account.balance}"></option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Visualizar Transações</button>
+    </form>
+</div>
+</body>
+</html>

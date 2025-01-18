@@ -1,8 +1,12 @@
 package io.github.msj.swiftbank.controller;
 
+import io.github.msj.swiftbank.entity.Account;
+import io.github.msj.swiftbank.entity.Transaction;
 import io.github.msj.swiftbank.entity.User;
 import io.github.msj.swiftbank.service.AccountService;
+import io.github.msj.swiftbank.service.TransactionService;
 import io.github.msj.swiftbank.service.UserService;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Controller
 @RequestMapping("/user")
@@ -21,9 +26,13 @@ public class UserTransactionController {
 
     private final UserService userService;
 
-    public UserTransactionController(AccountService accountService, UserService userService) {
+    private final TransactionService transactionService;
+
+    public UserTransactionController(AccountService accountService, UserService userService,
+                                     TransactionService transactionService) {
         this.accountService = accountService;
         this.userService = userService;
+        this.transactionService = transactionService;
     }
 
     @GetMapping("/dashboard")
@@ -39,6 +48,38 @@ public class UserTransactionController {
         User user = userService.findByUsername(authentication.getName());
         model.addAttribute("accounts", accountService.getAccountsByUser(user.getId()));
         return "user-account-list";
+    }
+
+    @GetMapping("/transactions/selection")
+    public String showTransactionSelection(Model model, Authentication authentication) {
+        // Obter o usuário logado
+        User user = userService.findByUsername(authentication.getName());
+
+        // Buscar todas as contas do usuário logado
+        List<Account> userAccounts = accountService.getAccountsByUser(user.getId());
+        model.addAttribute("accounts", userAccounts);
+
+        return "user-transaction-selection";
+    }
+
+    @PostMapping("/transactions")
+    public String listUserTransactions(@RequestParam Long accountId, Model model, Authentication authentication) {
+        // Obter o usuário logado
+        User user = userService.findByUsername(authentication.getName());
+
+        // Buscar a conta e verificar se pertence ao usuário
+        Account account = accountService.findById(accountId);
+
+        if (!account.getUser().getId().equals(user.getId())) {
+            throw new AccessDeniedException("Acesso negado: esta conta não pertence ao usuário logado.");
+        }
+
+        // Buscar transações da conta
+        List<Transaction> transactions = transactionService.getTransactionsByAccount(accountId);
+        model.addAttribute("transactions", transactions);
+        model.addAttribute("selectedAccount", account);
+
+        return "user-transaction-list";
     }
 
     @GetMapping("/accounts/credit")

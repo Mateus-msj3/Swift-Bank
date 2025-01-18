@@ -1,6 +1,9 @@
 package io.github.msj.swiftbank.controller;
 
+import io.github.msj.swiftbank.entity.Account;
+import io.github.msj.swiftbank.entity.Transaction;
 import io.github.msj.swiftbank.service.AccountService;
+import io.github.msj.swiftbank.service.TransactionService;
 import io.github.msj.swiftbank.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Controller
 @RequestMapping("/admin")
@@ -19,9 +23,13 @@ public class AdminAccountController {
 
     private final UserService userService;
 
-    public AdminAccountController(AccountService accountService, UserService userService) {
+    private final TransactionService transactionService;
+
+    public AdminAccountController(AccountService accountService, UserService userService,
+                                  TransactionService transactionService) {
         this.accountService = accountService;
         this.userService = userService;
+        this.transactionService = transactionService;
     }
 
     @GetMapping("/accounts/list")
@@ -35,6 +43,24 @@ public class AdminAccountController {
         model.addAttribute("totalAccounts", accountService.countAccounts());
         model.addAttribute("totalBalance", accountService.calculateTotalBalance());
         return "admin-dashboard";
+    }
+
+    @GetMapping("/accounts/transactions/selection")
+    public String showTransactionSelection(Model model) {
+        List<Account> allAccounts = accountService.findAll();
+        model.addAttribute("accounts", allAccounts);
+
+        return "admin-transaction-selection";
+    }
+
+    @PostMapping("/transactions")
+    public String listAdminTransactions(@RequestParam Long accountId, Model model) {
+        Account account = accountService.findById(accountId);
+        List<Transaction> transactions = transactionService.getTransactionsByAccount(accountId);
+        model.addAttribute("transactions", transactions);
+        model.addAttribute("selectedAccount", account);
+
+        return "admin-transaction-list";
     }
 
     @GetMapping("/accounts/create")

@@ -32,6 +32,11 @@ public class AccountService {
         return accountRepository.findAll();
     }
 
+    public Account findById(Long accountId) {
+        return accountRepository.findById(accountId)
+                .orElseThrow(() -> new IllegalArgumentException("Conta não encontrada."));
+    }
+
     public List<Account> getAccountsByUser(Long userId) {
         return accountRepository.findByUserId(userId);
     }

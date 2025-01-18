@@ -29,7 +29,7 @@
           <ul class="dropdown-menu" aria-labelledby="adminMenu">
             <li><a class="dropdown-item" th:href="@{/admin/accounts/create}">Criar Conta</a></li>
             <li><a class="dropdown-item" th:href="@{/admin/accounts/list}">Listar Contas</a></li>
-            <li><a class="dropdown-item" th:href="@{/admin/accounts/transactions}">Relatório de Transações</a></li>
+            <li><a class="dropdown-item" th:href="@{/admin/accounts/transactions/selection}">Relatório de Transações</a></li>
           </ul>
         </li>
 
@@ -40,6 +40,7 @@
           </a>
           <ul class="dropdown-menu" aria-labelledby="userMenu">
             <li><a class="dropdown-item" th:href="@{/user/accounts/list}">Listar Contas</a></li>
+            <li><a class="dropdown-item" th:href="@{/user/transactions/selection}">Relatório de Transações</a></li>
             <li><a class="dropdown-item" th:href="@{/user/accounts/credit}">Creditar Valor</a></li>
             <li><a class="dropdown-item" th:href="@{/user/accounts/debit}">Debitar Valor</a></li>
             <li><a class="dropdown-item" th:href="@{/user/accounts/transfer}">Transferir Valor</a></li>
