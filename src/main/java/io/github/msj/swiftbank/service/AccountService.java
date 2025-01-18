@@ -15,6 +15,7 @@ import java.util.Optional;
 @Service
 public class AccountService {
 
+    private static final String ACCOUNT_NOT_FOUND_MESSAGE = "Conta não encontrada.";
 
     private final AccountRepository accountRepository;
 
@@ -34,7 +35,7 @@ public class AccountService {
 
     public Account findById(Long accountId) {
         return accountRepository.findById(accountId)
-                .orElseThrow(() -> new IllegalArgumentException("Conta não encontrada."));
+                .orElseThrow(() -> new IllegalArgumentException(ACCOUNT_NOT_FOUND_MESSAGE));
     }
 
     public List<Account> getAccountsByUser(Long userId) {
@@ -77,7 +78,7 @@ public class AccountService {
 
         Optional<Account> optionalAccount = accountRepository.findById(accountId);
         if (!optionalAccount.isPresent()) {
-            throw new IllegalArgumentException("Conta não encontrada.");
+            throw new IllegalArgumentException(ACCOUNT_NOT_FOUND_MESSAGE);
         }
 
         Account account = optionalAccount.get();
@@ -97,7 +98,7 @@ public class AccountService {
         }
 
         Account account = accountRepository.findById(accountId)
-                .orElseThrow(() -> new IllegalArgumentException("Conta não encontrada."));
+                .orElseThrow(() -> new IllegalArgumentException(ACCOUNT_NOT_FOUND_MESSAGE));
 
         if (account.getBalance().compareTo(amount) < 0) {
             throw new IllegalArgumentException("Saldo insuficiente para realizar o débito.");
