@@ -52,10 +52,8 @@ public class UserTransactionController {
 
     @GetMapping("/transactions/selection")
     public String showTransactionSelection(Model model, Authentication authentication) {
-        // Obter o usuário logado
         User user = userService.findByUsername(authentication.getName());
 
-        // Buscar todas as contas do usuário logado
         List<Account> userAccounts = accountService.getAccountsByUser(user.getId());
         model.addAttribute("accounts", userAccounts);
 
@@ -64,17 +62,14 @@ public class UserTransactionController {
 
     @PostMapping("/transactions")
     public String listUserTransactions(@RequestParam Long accountId, Model model, Authentication authentication) {
-        // Obter o usuário logado
         User user = userService.findByUsername(authentication.getName());
 
-        // Buscar a conta e verificar se pertence ao usuário
         Account account = accountService.findById(accountId);
 
         if (!account.getUser().getId().equals(user.getId())) {
             throw new AccessDeniedException("Acesso negado: esta conta não pertence ao usuário logado.");
         }
 
-        // Buscar transações da conta
         List<Transaction> transactions = transactionService.getTransactionsByAccount(accountId);
         model.addAttribute("transactions", transactions);
         model.addAttribute("selectedAccount", account);
