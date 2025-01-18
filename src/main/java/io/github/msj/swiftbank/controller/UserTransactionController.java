@@ -26,6 +26,21 @@ public class UserTransactionController {
         this.userService = userService;
     }
 
+    @GetMapping("/dashboard")
+    public String showDashboard(Model model, Authentication authentication) {
+        User user = userService.findByUsername(authentication.getName());
+        BigDecimal totalBalance = accountService.calculateTotalBalanceByUser(user.getId());
+        model.addAttribute("totalBalance", totalBalance != null ? totalBalance : BigDecimal.ZERO);
+        return "user-dashboard";
+    }
+
+    @GetMapping("/accounts/list")
+    public String listUserAccounts(Model model, Authentication authentication) {
+        User user = userService.findByUsername(authentication.getName());
+        model.addAttribute("accounts", accountService.getAccountsByUser(user.getId()));
+        return "user-account-list";
+    }
+
     @GetMapping("/accounts/credit")
     public String showCreditForm(Model model, Authentication authentication) {
         addUserAccountsToModel(model, authentication);

@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.w3.org/1999/xhtml" layout:decorate="layout">
+<body>
+<div layout:fragment="content">
+    <div class="container mt-5">
+        <h2 class="text-center">Dashboard do Admin</h2>
+        <p>Total de Contas: <span th:text="${totalAccounts}"></span></p>
+        <p>Saldo Total no Banco: <span th:text="${#numbers.formatDecimal(totalBalance, 0, 'POINT', 2, 'COMMA')}"></span></p>
+    </div>
+</div>
+</body>
+</html>

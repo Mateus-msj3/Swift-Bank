@@ -24,6 +24,19 @@ public class AdminAccountController {
         this.userService = userService;
     }
 
+    @GetMapping("/accounts/list")
+    public String listAllAccounts(Model model) {
+        model.addAttribute("accounts", accountService.findAll());
+        return "admin-account-list";
+    }
+
+    @GetMapping("/dashboard")
+    public String showDashboard(Model model) {
+        model.addAttribute("totalAccounts", accountService.countAccounts());
+        model.addAttribute("totalBalance", accountService.calculateTotalBalance());
+        return "admin-dashboard";
+    }
+
     @GetMapping("/accounts/create")
     public String showCreateAccountForm(Model model) {
         model.addAttribute("users", userService.findAll());
@@ -44,4 +57,5 @@ public class AdminAccountController {
         model.addAttribute("users", userService.findAll());
         return "create-account";
     }
+
 }

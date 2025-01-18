@@ -28,6 +28,10 @@ public class AccountService {
         this.userService = userService;
     }
 
+    public List<Account> findAll() {
+        return accountRepository.findAll();
+    }
+
     public List<Account> getAccountsByUser(Long userId) {
         return accountRepository.findByUserId(userId);
     }
@@ -36,6 +40,17 @@ public class AccountService {
         return accountRepository.findAccountsExcludingUser(userId);
     }
 
+    public Long countAccounts() {
+        return accountRepository.count();
+    }
+
+    public BigDecimal calculateTotalBalance() {
+        return accountRepository.calculateTotalBalance();
+    }
+
+    public BigDecimal calculateTotalBalanceByUser(Long userId) {
+        return accountRepository.calculateTotalBalanceByUser(userId);
+    }
 
     public Account createAccount(String ownerName, BigDecimal initialBalance, Long userId) {
         if (Objects.isNull(initialBalance) || initialBalance.compareTo(BigDecimal.ZERO) < 0) {
